@@ -1,4 +1,4 @@
-import { prismaAdmin } from "../db";
+import { PrismaAdmin } from "../db";
 import { transformer } from "./shared";
 
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -10,7 +10,7 @@ export const createTRPCContext = (
 ) => {
   return {
     ...opt,
-    prismaAdmin,
+    prismaAdmin: PrismaAdmin,
   };
 };
 

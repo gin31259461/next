@@ -1,11 +1,10 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-
-import { prismaAdmin } from "../db";
-
 // To use the custom WKE SSO provider, uncomment the import below and the
 // WKESSOProvider entry in the `providers` array, then add the required env vars.
 // import WKESSOProvider from "./wke-sso-provider";
+//
+import { PrismaAdmin } from "../db";
 
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import {
   type DefaultSession,
   getServerSession,
@@ -42,7 +41,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
   },
-  adapter: PrismaAdapter(prismaAdmin),
+  adapter: PrismaAdapter(PrismaAdmin),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

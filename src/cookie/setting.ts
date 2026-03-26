@@ -2,7 +2,7 @@ type CookieOptions = {
   path?: string;
   secure?: boolean;
   sameSite?: "none" | "lax" | "strict";
-  expires?: number | Date;
+  expires?: Date;
   domain?: string;
 };
 
