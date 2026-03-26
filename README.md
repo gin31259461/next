@@ -8,110 +8,10 @@ A minimal, opinionated Next.js starter — wired up and ready to build on.
 |---|---|
 | Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack) |
 | Language | TypeScript 5 (strict) |
-| UI | [MUI v7](https://mui.com) + Emotion — dark/light theme |
-| API | [tRPC v11](https://trpc.io) + TanStack Query v5 |
-| Auth | [NextAuth.js v4](https://next-auth.js.org) — Google, Facebook |
-| Database | [Prisma 6](https://prisma.io) — PostgreSQL default |
-| State | [Zustand v5](https://zustand.docs.pmnd.rs) SSR-safe adapter |
-| Env validation | [@t3-oss/env-nextjs](https://env.t3.gg) |
-| Package manager | [pnpm](https://pnpm.io) |
-
-## Getting Started
-
-```bash
-# 1. Install dependencies
-pnpm install
-
-# 2. Set up env
-cp .env.example .env
-# Fill in DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL, OAuth keys
-
-# 3. Push database schema
-pnpm db-push
-
-# 4. Run dev server
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) — the test page shows tRPC and auth status.
-
----
-
-## Structure
-
-```
-src/
-├── app/
-│   ├── layout.tsx          # Root layout — MUI + tRPC + NextAuth providers
-│   ├── page.tsx            # Test page (tRPC hello + auth status)
-│   ├── loading.tsx
-│   ├── globals.css
-│   ├── fonts/inter/
-│   └── api/
-│       ├── auth/           # NextAuth route
-│       └── trpc/           # tRPC route
-├── components/
-│   └── provider/
-│       └── theme-provider.tsx
-├── server/
-│   ├── api/
-│   │   ├── root.ts         # tRPC router — add your routers here
-│   │   └── controllers/
-│   │       └── greeting.ts # Example: greeting.hello procedure
-│   ├── auth/
-│   │   ├── auth.ts         # NextAuth config (Google + Facebook)
-│   │   ├── session-provider.tsx
-│   │   └── wke-sso-provider.ts  # Custom OAuth example (commented out)
-│   ├── trpc/               # tRPC client/server/RSC helpers
-│   └── db.ts               # Prisma singleton
-├── utils/theme/            # MUI color tokens, dark/light hook
-├── cookie/setting.ts
-├── types/global.d.ts
-└── env.mjs                 # Validated env vars
-prisma/schema.prisma        # NextAuth tables + add your models here
-```
-
-## Adding a tRPC procedure
-
-```ts
-// src/server/api/controllers/post.ts
-import { z } from "zod";
-import { publicProcedure } from "@/server/trpc/procedure";
-
-export const list = publicProcedure.query(() => []);
-export const create = publicProcedure.input(z.object({ title: z.string() })).mutation(({ input }) => input);
-```
-
-```ts
-// src/server/api/root.ts
-import * as postController from "./controllers/post";
-const post = createTRPCRouter({ ...postController });
-export const appRouter = createTRPCRouter({ greeting, post });
-```
-
-## Scripts
-
-| Script | Description |
-|---|---|
-| `pnpm dev` | Dev server (Turbopack) |
-| `pnpm build` | Production build |
-| `pnpm lint` | ESLint |
-| `pnpm db-push` | Push schema to DB |
-| `pnpm db-gen` | Generate Prisma client |
-
-
-A clean, opinionated Next.js starter template.
-
-## Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack) |
-| Language | TypeScript 5 (strict) |
 | UI | [MUI v7](https://mui.com) + Emotion — dark/light theme system |
 | API | [tRPC v11](https://trpc.io) + TanStack Query v5 |
 | Auth | [NextAuth.js v4](https://next-auth.js.org) — Google, Facebook (WKE SSO example included) |
-| Database | [Prisma 6](https://prisma.io) — PostgreSQL by default (swap provider in `prisma/schema.prisma`) |
+| Database | [Prisma 7](https://prisma.io) + [`@prisma/adapter-pg`](https://www.npmjs.com/package/@prisma/adapter-pg) — PostgreSQL |
 | State | [Zustand v5](https://zustand.docs.pmnd.rs) with SSR-safe provider pattern |
 | Env validation | [@t3-oss/env-nextjs](https://env.t3.gg) |
 | Package manager | [pnpm](https://pnpm.io) |
@@ -132,7 +32,7 @@ cp .env.example .env
 
 Fill in the values in `.env`. Required keys:
 
-- `DATABASE_URL` — Prisma connection string
+- `DATABASE_URL` — PostgreSQL connection string (e.g. `postgresql://user:password@localhost:5432/mydb`)
 - `NEXTAUTH_SECRET` — generate with `openssl rand -base64 32`
 - `NEXTAUTH_URL` — e.g. `http://localhost:3000/api/auth`
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — from [Google Cloud Console](https://console.developers.google.com)
@@ -146,11 +46,13 @@ Push the schema to your database (creates tables):
 pnpm db-push
 ```
 
-Or generate the Prisma client only (if DB already has the schema):
+Or regenerate the Prisma client only (if the DB already has the schema):
 
 ```bash
 pnpm db-gen
 ```
+
+> The generated client is output to `generated/prisma/`.
 
 ### 4. Run the dev server
 
@@ -174,7 +76,7 @@ src/
 │   ├── @auth/             # Parallel route — intercepted login modal
 │   ├── _components/       # Layout-level components (LoginContent, LoginDialog)
 │   ├── login/             # /login — full-page login fallback
-│   ├── fonts/             # Local fonts (Inter, Optima)
+│   ├── fonts/             # Local fonts
 │   └── api/
 │       ├── auth/          # NextAuth API route
 │       └── trpc/          # tRPC API route
@@ -188,7 +90,7 @@ src/
 │   │   ├── session-provider.tsx
 │   │   └── wke-sso-provider.ts  # Custom OAuth provider example (commented out)
 │   ├── trpc/              # tRPC client/server setup
-│   └── db.ts              # Prisma client singleton
+│   └── db.ts              # Prisma client singleton (PrismaPg adapter)
 ├── store/                 # Zustand stores
 │   └── adapter/           # SSR-safe Zustand provider pattern
 ├── types/                 # Shared TypeScript types
@@ -198,15 +100,36 @@ src/
 ├── env.mjs                # Validated environment variables
 └── pathname.ts            # Route path constants
 prisma/
-└── schema.prisma          # Database schema (NextAuth tables + your models)
+├── schema.prisma          # Database schema (NextAuth tables + your models)
+└── migrations/            # Migration history
+prisma.config.ts           # Prisma adapter & migrations config
+generated/
+└── prisma/                # Generated Prisma client (do not edit)
 ```
 
 ## Adding Features
 
 ### Adding a tRPC router
 
-1. Create `src/server/api/controllers/my-feature.ts` with your procedures
-2. Register it in `src/server/api/root.ts`
+1. Create `src/server/api/controllers/my-feature.ts` with your procedures:
+
+```ts
+import { z } from "zod";
+import { publicProcedure } from "@/server/trpc/procedure";
+
+export const list = publicProcedure.query(() => []);
+export const create = publicProcedure
+  .input(z.object({ title: z.string() }))
+  .mutation(({ input }) => input);
+```
+
+2. Register it in `src/server/api/root.ts`:
+
+```ts
+import * as myFeatureController from "./controllers/my-feature";
+const myFeature = createTRPCRouter({ ...myFeatureController });
+export const appRouter = createTRPCRouter({ greeting, myFeature });
+```
 
 ### Adding a database model
 
@@ -224,8 +147,12 @@ pnpm db-push
 
 ### Changing the database
 
-Update `datasource db.provider` in `prisma/schema.prisma` (e.g. `mysql`, `sqlserver`) and
-adjust `DATABASE_URL` format accordingly.
+This template uses the Prisma driver adapter pattern (`@prisma/adapter-pg`). To switch databases:
+
+1. Replace `@prisma/adapter-pg` with the appropriate Prisma adapter package (e.g. `@prisma/adapter-neon`, `@prisma/adapter-planetscale`)
+2. Update `datasource db.provider` in `prisma/schema.prisma`
+3. Update `src/server/db.ts` to use the new adapter
+4. Adjust `DATABASE_URL` format in `.env`
 
 ## Scripts
 
@@ -238,4 +165,4 @@ adjust `DATABASE_URL` format accordingly.
 | `pnpm lint:fix` | Auto-fix ESLint issues |
 | `pnpm db-push` | Push Prisma schema to DB |
 | `pnpm db-pull` | Pull DB schema into Prisma |
-| `pnpm db-gen` | Generate Prisma client |
+| `pnpm db-gen` | Generate Prisma client (outputs to `generated/prisma/`) |
