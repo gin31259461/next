@@ -3,7 +3,8 @@
 // Reference: https://next-auth.js.org/adapters/prisma
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
