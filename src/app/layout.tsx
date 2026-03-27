@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 
 import type { Metadata } from "next";
 
+import { ClientCookiesProvider } from "@/components/provider/client-cookies-provider";
 import { ThemeProvider } from "@/components/provider/theme-provider";
 import { authOptions } from "@/server/auth/auth";
 import SessionProvider from "@/server/auth/session-provider";
@@ -19,7 +20,9 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout(
+  { children }: Readonly<{ children: ReactNode }>,
+) {
   const session = await getServerSession(authOptions);
   const cookieStore = await cookies();
   const theme = cookieStore.get("theme");
@@ -29,11 +32,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <TrpcProvider>
           <SessionProvider session={session}>
-            <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-              <ThemeProvider initTheme={theme?.value as ThemeMode ?? "light"}>
-                {children}
-              </ThemeProvider>
-            </AppRouterCacheProvider>
+            <ClientCookiesProvider>
+              <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+                <ThemeProvider initTheme={theme?.value as ThemeMode ?? "light"}>
+                  {children}
+                </ThemeProvider>
+              </AppRouterCacheProvider>
+            </ClientCookiesProvider>
           </SessionProvider>
         </TrpcProvider>
       </body>

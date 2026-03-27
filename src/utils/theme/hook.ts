@@ -4,8 +4,6 @@ import { createTheme } from "@mui/material";
 import { createContext, useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 
-import { cookieOptions } from "@/cookie/setting";
-
 interface ColorModeContextProps {
   toggleColorMode: () => void;
 }
@@ -21,7 +19,7 @@ export const useMode = (initTheme: ThemeMode = "light") => {
   const [, setCookie] = useCookies(["theme"]);
 
   useEffect(() => {
-    setCookie("theme", mode, cookieOptions);
+    setCookie("theme", mode);
   }, [mode, setCookie]);
 
   const colorMode = useMemo<ColorModeContextProps>(() => {

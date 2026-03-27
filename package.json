@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "db-push": "dotenv -e .env -- prisma db push",
-    "db-pull": "dotenv -e .env -- prisma db pull",
+    "db-push": "dotenv -e .env.local -- prisma db push",
+    "db-pull": "dotenv -e .env.local -- prisma db pull",
     "db-gen": "prisma generate"
   },
   "dependencies": {
@@ -64,7 +64,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "prisma": "^7.5.0",
-    "typescript": "^6.0.2",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.4"
   }
 }
