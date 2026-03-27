@@ -7,7 +7,7 @@ A minimal, opinionated Next.js starter — wired up and ready to build on.
 | Layer | Technology |
 |---|---|
 | Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack) |
-| Language | TypeScript 5 (strict) |
+| Language | TypeScript 6 (strict) |
 | UI | [MUI v7](https://mui.com) + Emotion — dark/light theme system |
 | API | [tRPC v11](https://trpc.io) + TanStack Query v5 |
 | Auth | [NextAuth.js v4](https://next-auth.js.org) — Google, Facebook (WKE SSO example included) |
