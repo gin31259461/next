@@ -1,5 +1,6 @@
 // Prisma ORM
 // https://www.prisma.io/docs/prisma-postgres/quickstart/prisma-orm
+// https://www.prisma.io/docs/postgres
 
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
